@@ -1,0 +1,7 @@
+Plaintext
+streamlit
+google-api-python-client
+pandas
+plotly
+wordcloud
+matplotlib
