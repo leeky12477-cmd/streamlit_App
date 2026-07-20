@@ -146,7 +146,7 @@ if video_id:
             if refined_text.strip():
                 try:
                     # 폰트 경로 설정 (깃허브 루트 폴더에 업로드한 파일 이름과 일치해야 함)
-                    font_path = "NanumGothic.ttf" 
+                    font_path = "youtube/NanumGothic.ttf" 
                     
                     wordcloud = WordCloud(
                         font_path=font_path,
