@@ -61,7 +61,11 @@ if "count" not in st.session_state:
 
 MAX_DRAWS = 3 # 하루 최대 3회 제한
 
-# 4. 타이틀 영역
+# 4. 랜덤 HEX 색상 코드 생성 함수 (#000000 ~ #FFFFFF)
+def generate_random_hex_color():
+    return f"#{random.randint(0, 0xFFFFFF):06X}"
+
+# 5. 타이틀 영역
 st.markdown("""
     <div class='title-container'>
         <div class='main-title'>🎲 오늘의 운세 복권</div>
@@ -103,7 +107,7 @@ if not st.session_state.drawn:
             st.rerun()
 
 # ----------------------------------------------------
-# 화면 2: 긁기 화면 (카테고리별 맞춤 운세 데이터)
+# 화면 2: 긁기 화면
 # ----------------------------------------------------
 else:
     # 카테고리별 특화 운세 데이터 세트
@@ -245,15 +249,27 @@ else:
         }
     }
 
-    # 다양하게 확장된 색상표
-    lucky_colors = [
-        "로즈 핑크 🌸", "포레스트 그린 🌲", "미드나잇 블루 🌙", "버터 옐로우 🧈", "아이보리 화이트 🤍",
-        "라벤더 퍼플 💜", "피치 코랄 🍑", "스카이 블루 ☁️", "민트 그린 🌿", "선셋 오렌지 🌅",
-        "크림 베이지 🍦", "에메랄드 그린 💚", "와인 레드 🍷", "네이비 🌌", "올리브 그린 🫒",
-        "딥 바이올렛 🔮", "펄 실버 🩶", "클래식 골드 💛", "차콜 그레이 🖤", "오션 틸 🌊"
+    # 확장된 행운의 장소 목록 (18가지 다양화)
+    lucky_places = [
+        "햇살 잘 드는 테라스 카페 ☕",
+        "아늑한 내 방 침대 🛌",
+        "조용한 도서관/북카페 📚",
+        "나무 그늘 아래 산책로 🌿",
+        "자주 가는 편의점 🏪",
+        "감성 넘치는 소품샵 🎁",
+        "탁 트인 건물 옥상정원 🏙️",
+        "조용한 미술관/전시회 🎨",
+        "시원한 인근 천변/호수공원 🌊",
+        "따스한 햇살이 드는 창가 ☀️",
+        "분위기 좋은 재즈바/카페 🎷",
+        "시끌벅적한 전통시장 🍎",
+        "향긋한 꽃집 🧺",
+        "시원하고 탁 트인 언덕길 🍃",
+        "맛있는 냄새가 나는 베이커리 🥐",
+        "레트로 느낌의 LP바 🎶",
+        "복잡함에서 벗어난 지하철 창가석 🚃",
+        "신선한 공기가 느껴지는 산책길 🌳"
     ]
-    
-    lucky_places = ["햇살 잘 드는 카페 ☕", "아늑한 내 방 침대 🛌", "조용한 공원 산책로 🌿", "자주 가는 편의점 🏪", "서점이나 소품샵 📚"]
     
     music_list = [
         "🎧 신나는 시티팝 (드라이브하는 기분 내기)",
@@ -270,7 +286,7 @@ else:
         "“오늘 어떤 일이 있든, 결국엔 전부 다 잘 될 거니까 걱정 마세요.”"
     ]
 
-    # 선택된 카테고리 명칭 추출 (예: "재물운 💎" -> "재물운")
+    # 선택된 카테고리 명칭 추출
     raw_cat = st.session_state.selected_category
     cat_name = raw_cat.split()[0]
 
@@ -282,7 +298,7 @@ else:
     res = current_category_data[status_key]
 
     # 행운 요소 및 부가 데이터 추출
-    color = random.choice(lucky_colors)
+    color_hex = generate_random_hex_color() # 완전히 무작위인 #HEX 색상 코드 생성
     place = random.choice(lucky_places)
     number = random.randint(1, 99)
     bgm = random.choice(music_list)
@@ -335,7 +351,7 @@ else:
             
             .lucky-grid {{
                 display: grid;
-                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-columns: 1fr 1.2fr 0.8fr;
                 gap: 8px;
                 margin-bottom: 15px;
             }}
@@ -353,9 +369,22 @@ else:
                 margin-bottom: 4px;
             }}
             .lucky-val {{
-                font-size: 0.85rem;
+                font-size: 0.82rem;
                 color: #1A202C;
                 font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                word-break: keep-all;
+            }}
+            .color-dot {{
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                display: inline-block;
+                border: 1px solid rgba(0,0,0,0.15);
+                flex-shrink: 0;
             }}
 
             .music {{ background: #F0F9FF; color: #0369A1; padding: 10px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 10px; font-weight: 600; }}
@@ -391,7 +420,10 @@ else:
                 <div class="lucky-grid">
                     <div class="lucky-card">
                         <div class="lucky-label">🎨 행운의 컬러</div>
-                        <div class="lucky-val">{color}</div>
+                        <div class="lucky-val">
+                            <span class="color-dot" style="background-color: {color_hex};"></span>
+                            {color_hex}
+                        </div>
                     </div>
                     <div class="lucky-card">
                         <div class="lucky-label">📍 행운의 장소</div>
