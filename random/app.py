@@ -85,7 +85,7 @@ if not st.session_state.drawn:
         </div>
     """, unsafe_allow_html=True)
 
-    # 5가지 요청 카테고리 선택
+    # 5가지 카테고리 선택
     category = st.selectbox(
         "👉 뽑고 싶은 운세를 선택해주세요",
         ["종합운 🌟", "재물운 💎", "학업운 📚", "금전운 💰", "연애운 💕"]
@@ -105,7 +105,7 @@ if not st.session_state.drawn:
             st.rerun()
 
 # ----------------------------------------------------
-# 화면 2: 긁기 화면 (40% 이상 긁으면 자동 오픈 구현)
+# 화면 2: 긁기 화면 (행운 요소 명칭 라벨 직관화)
 # ----------------------------------------------------
 else:
     # 운세 데이터
@@ -181,7 +181,7 @@ else:
     quote = random.choice(healing_quotes)
     cat_name = st.session_state.selected_category.split()[0]
 
-    # HTML/JS 자동 긁기 기능 적용 (40% 이상 긁으면 전체 노출)
+    # HTML/JS 자동 긁기 기능 및 명확한 라벨링 적용
     scratch_html = f"""
     <!DOCTYPE html>
     <html>
@@ -225,9 +225,33 @@ else:
             }}
             .do-box {{ background: #F0FDF4; border: 1px solid #BBF7D0; padding: 10px; border-radius: 10px; font-size: 0.85rem; color: #166534; text-align: left; }}
             .dont-box {{ background: #FEF2F2; border: 1px solid #FECACA; padding: 10px; border-radius: 10px; font-size: 0.85rem; color: #991B1B; text-align: left; }}
-            .lucky-row {{
-                display: flex; justify-content: space-around; background: #EDF2F7; padding: 10px; border-radius: 10px; font-size: 0.8rem; font-weight: bold; color: #2D3748; margin-bottom: 12px;
+            
+            /* 행운 요소 3개 컬럼 그리드 레이아웃 */
+            .lucky-grid {{
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 8px;
+                margin-bottom: 15px;
             }}
+            .lucky-card {{
+                background: #F8FAFC;
+                border: 1px solid #E2E8F0;
+                border-radius: 12px;
+                padding: 10px 5px;
+                text-align: center;
+            }}
+            .lucky-label {{
+                font-size: 0.75rem;
+                color: #718096;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }}
+            .lucky-val {{
+                font-size: 0.85rem;
+                color: #1A202C;
+                font-weight: 700;
+            }}
+
             .music {{ background: #F0F9FF; color: #0369A1; padding: 10px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 10px; font-weight: 600; }}
             .quote {{ font-size: 0.85rem; color: #4A5568; font-style: italic; }}
             
@@ -257,11 +281,23 @@ else:
                     <div class="do-box"><b>⭕ 해보세요</b><br>{res['dos']}</div>
                     <div class="dont-box"><b>❌ 피하세요</b><br>{res['donts']}</div>
                 </div>
-                <div class="lucky-row">
-                    <span>🎨 {color}</span>
-                    <span>📍 {place}</span>
-                    <span>🔢 행운의 수: {number}</span>
+                
+                <!-- 명확하게 단어를 표기한 행운 카드 영역 -->
+                <div class="lucky-grid">
+                    <div class="lucky-card">
+                        <div class="lucky-label">🎨 행운의 컬러</div>
+                        <div class="lucky-val">{color}</div>
+                    </div>
+                    <div class="lucky-card">
+                        <div class="lucky-label">📍 행운의 장소</div>
+                        <div class="lucky-val">{place}</div>
+                    </div>
+                    <div class="lucky-card">
+                        <div class="lucky-label">🔢 행운의 숫자</div>
+                        <div class="lucky-val">{number}</div>
+                    </div>
                 </div>
+
                 <div class="music">🎵 {bgm}</div>
                 <div class="quote">💌 {quote}</div>
             </div>
@@ -305,7 +341,6 @@ else:
                 const pixels = imageData.data;
                 let transparentPixels = 0;
 
-                // Alpha 값을 체크하여 긁힌 픽셀 수 계산
                 for (let i = 3; i < pixels.length; i += 4) {{
                     if (pixels[i] === 0) {{
                         transparentPixels++;
