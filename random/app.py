@@ -9,7 +9,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. 커스텀 CSS (유아틱하지 않은 깔끔하고 모던한 모노/파스텔 스타일)
+# 2. 커스텀 CSS (깔끔하고 모던한 모노/파스텔 스타일)
 st.markdown("""
     <style>
     /* 전체 배경 */
@@ -20,17 +20,17 @@ st.markdown("""
     /* 타이틀 디자인 */
     .title-container {
         text-align: center;
-        padding: 25px 0 10px 0;
+        padding: 20px 0 10px 0;
     }
     .main-title {
-        font-size: 2.6rem;
+        font-size: 2.5rem;
         font-weight: 800;
         color: #1A202C;
         margin-bottom: 6px;
         letter-spacing: -0.5px;
     }
     .sub-title {
-        font-size: 1.05rem;
+        font-size: 1rem;
         color: #4A5568;
         font-weight: 500;
     }
@@ -39,55 +39,55 @@ st.markdown("""
     .intro-card {
         background: white;
         border-radius: 20px;
-        padding: 30px 25px;
+        padding: 25px;
         text-align: center;
         box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05);
         border: 1px solid #E2E8F0;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
     }
     .intro-badge {
         display: inline-block;
         background-color: #EDF2F7;
         color: #2D3748;
         font-weight: 700;
-        padding: 6px 16px;
+        padding: 5px 14px;
         border-radius: 20px;
         font-size: 0.85rem;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
     }
 
     /* 결과 메인 카드 */
     .fortune-card {
         background: white;
         border-radius: 24px;
-        padding: 32px;
+        padding: 28px;
         text-align: center;
         box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.06);
         border: 1px solid #E2E8F0;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
     }
     .result-emoji {
-        font-size: 4.5rem;
+        font-size: 4.2rem;
         line-height: 1;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
     .result-status {
-        font-size: 2.1rem;
+        font-size: 2rem;
         font-weight: 800;
         color: #1A202C;
         margin-bottom: 6px;
     }
     .stars {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         color: #ECC94B;
-        margin-bottom: 20px;
+        margin-bottom: 16px;
     }
     .summary-text {
         font-size: 1.05rem;
         line-height: 1.7;
         color: #2D3748;
         background-color: #F7FAFC;
-        padding: 20px;
+        padding: 18px;
         border-radius: 16px;
         border-left: 4px solid #4A5568;
         text-align: left;
@@ -98,29 +98,40 @@ st.markdown("""
         background: white;
         border: 1px solid #E2E8F0;
         border-radius: 16px;
-        padding: 18px 10px;
+        padding: 16px 8px;
         text-align: center;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
     }
     .lucky-title {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         color: #718096;
         font-weight: 600;
         margin-bottom: 6px;
     }
     .lucky-value {
-        font-size: 1.05rem;
+        font-size: 1rem;
         color: #1A202C;
         font-weight: 700;
+    }
+
+    /* 음악 추천 박스 */
+    .music-box {
+        background: #F0F9FF;
+        border-radius: 16px;
+        padding: 18px;
+        text-align: center;
+        border: 1px solid #BAE6FD;
+        margin-top: 15px;
+        color: #0369A1;
     }
 
     /* 한마디 메시지 박스 */
     .quote-box {
         background: #F7FAFC;
         border-radius: 16px;
-        padding: 20px;
+        padding: 18px;
         text-align: center;
-        font-size: 1.05rem;
+        font-size: 1rem;
         color: #2D3748;
         font-weight: 600;
         border: 1px solid #E2E8F0;
@@ -130,7 +141,15 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. 타이틀 영역
+# 3. 세션 상태 초기화 (결과 화면 및 횟수 제한용)
+if "drawn" not in st.session_state:
+    st.session_state.drawn = False
+if "count" not in st.session_state:
+    st.session_state.count = 0
+
+MAX_DRAWS = 3 # 하루 최대 뽑기 횟수 제한
+
+# 4. 타이틀 영역
 st.markdown("""
     <div class='title-container'>
         <div class='main-title'>🎲 오늘의 운세 뽑기</div>
@@ -140,44 +159,45 @@ st.markdown("""
 
 st.write("")
 
-# 세션 상태 초기화 (결과 화면 전환용)
-if "drawn" not in st.session_state:
-    st.session_state.drawn = False
-
 # ----------------------------------------------------
-# 화면 1: 첫 화면 (깔끔하고 유아틱하지 않은 세련된 뽑기 화면)
+# 화면 1: 첫 화면 (카테고리 선택 및 횟수 제한 안내)
 # ----------------------------------------------------
 if not st.session_state.drawn:
-    st.markdown("""
+    st.markdown(f"""
         <div class='intro-card'>
             <div class='intro-badge'>🔮 TODAY's FORTUNE</div>
-            <h3 style='margin-top:0; color:#1A202C; font-size:1.3rem;'>어떤 운세가 궁금하신가요?</h3>
-            <p style='color:#718096; font-size:0.95rem; margin-bottom:0;'>
-                카테고리를 선택하고 <b>[운세 뽑기]</b> 버튼을 눌러 소소한 재미를 확인해보세요.
+            <h3 style='margin-top:0; color:#1A202C; font-size:1.25rem;'>어떤 운세가 궁금하신가요?</h3>
+            <p style='color:#718096; font-size:0.9rem; margin-bottom:0;'>
+                카테고리를 선택하고 운세를 뽑아보세요.<br>
+                <b>(남은 기회: {MAX_DRAWS - st.session_state.count} / {MAX_DRAWS}회)</b>
             </p>
         </div>
     """, unsafe_allow_html=True)
 
-    # 단순하고 직관적인 카테고리 선택
+    # 카테고리 선택
     category = st.selectbox(
         "👉 카테고리를 선택해주세요",
         ["종합운 🌟", "금전운 💰", "학업/시험운 📚", "재물운 💎", "연애/대인관계운 💕"]
     )
 
     st.write("")
-    st.write("")
 
-    # 뽑기 버튼
-    if st.button("🎲 오늘의 운세 뽑기!", use_container_width=True, type="primary"):
-        st.session_state.selected_category = category
-        st.session_state.drawn = True
-        st.rerun()
+    # 횟수 제한 로직
+    if st.session_state.count >= MAX_DRAWS:
+        st.warning("⚠️ 오늘의 기회를 모두 사용하셨습니다! 내일 다시 뽑아주세요. 🍀")
+        st.button("🎲 오늘의 운세 뽑기", disabled=True, use_container_width=True)
+    else:
+        if st.button("🎲 오늘의 운세 뽑기!", use_container_width=True, type="primary"):
+            st.session_state.selected_category = category
+            st.session_state.count += 1
+            st.session_state.drawn = True
+            st.rerun()
 
 # ----------------------------------------------------
-# 화면 2: 결과 화면 (가볍고 재밌는 조언)
+# 화면 2: 결과 화면 (긁기 연출 + BGM 추천 포함)
 # ----------------------------------------------------
 else:
-    # 가볍고 재밌게 읽을 수 있는 운세 데이터
+    # 운세 데이터
     fortunes = {
         "대길 (大吉)": {
             "score": 98,
@@ -185,7 +205,7 @@ else:
             "emoji": "🥳",
             "summary": "뭘 해도 이상하게 잘 풀리는 날입니다! 망설이던 일이 있다면 일단 지르고 보세요. 의외의 대박이나 소소한 횡재수가 기다리고 있습니다.",
             "dos": [
-                "평소 사고 싶었던 거나 먹고 싶었던 게 있다면 오늘은 자신 있게 질러보기!",
+                "평소 사고 싶었던 거나 먹고 싶었던 게 있다면 자신 있게 질러보기!",
                 "좋아하는 사람이나 친구한테 부담 없이 먼저 툭 연락해보기.",
                 "오늘만큼은 '되면 되고 말고!' 하는 당당한 마음가짐으로 행동하기."
             ],
@@ -261,10 +281,19 @@ else:
         }
     }
 
-    # 행운의 요소 (아이템 제거 ➡️ 행운의 장소/스팟으로 변경)
+    # 행운 요소 및 추천 음악 데이터
     lucky_colors = ["로즈 핑크 🌸", "포레스트 그린 🌲", "미드나잇 블루 🌙", "버터 옐로우 🧈", "아이보리 화이트 🤍"]
     lucky_places = ["햇살 잘 드는 카페 ☕", "아늑한 내 방 침대 🛌", "조용한 공원 산책로 🌿", "자주 가는 편의점 🏪", "서점이나 소품샵 📚"]
     lucky_numbers = [3, 7, 12, 21, 77, 99]
+    
+    music_list = [
+        "🎧 신나는 시티팝 (드라이브하는 기분 내기)",
+        "🎧 잔잔한 로파이(Lo-Fi) 비트 (힐링이 필요할 때)",
+        "🎧 청량한 밴드 사운드 (텐션 올리고 싶을 때)",
+        "🎧 따뜻한 아쿠스틱 기타 곡 (마음 정리가 필요할 때)",
+        "🎧 신나는 K-POP 플레이리스트 (에너지 충전!)"
+    ]
+    
     healing_quotes = [
         "“오늘 하루 정도는 대충 살아도 세상은 잘 돌아갑니다.”",
         "“뜻밖의 행운은 원래 기대 안 하고 있을 때 툭 찾아오는 법이에요.”",
@@ -274,8 +303,8 @@ else:
     ]
 
     # 로딩 연출
-    with st.spinner("🔮 오늘의 운세 카드를 뒤집는 중..."):
-        time.sleep(0.6)
+    with st.spinner("🔮 운세 복권을 인쇄하는 중..."):
+        time.sleep(0.5)
 
     # 랜덤 결과 추출
     status_key = random.choice(list(fortunes.keys()))
@@ -285,51 +314,67 @@ else:
     color = random.choice(lucky_colors)
     place = random.choice(lucky_places)
     number = random.choice(lucky_numbers)
+    bgm = random.choice(music_list)
     quote = random.choice(healing_quotes)
 
     cat_name = st.session_state.selected_category.split()[0]
 
-    # (1) 메인 운세 카드
-    st.markdown(f"""
-        <div class='fortune-card'>
-            <div class='result-emoji'>{res['emoji']}</div>
-            <div class='result-status'>[{cat_name}] {status_key}</div>
-            <div class='stars'>{res['stars']}</div>
-            <div class='summary-text'>💡 <b>오늘의 한줄 요약:</b><br>{res['summary']}</div>
-        </div>
-    """, unsafe_allow_html=True)
+    # (1) 복권 긁기 연출 (Expander 클릭 연출)
+    st.info("🪙 **아래 복권을 클릭해서 오늘의 운세를 긁어보세요!**")
+    
+    with st.expander("✨ [클릭] 오늘의 운세 복권 긁기 ✨", expanded=False):
+        # 복권을 열면 나오는 결과
+        st.markdown(f"""
+            <div class='fortune-card'>
+                <div class='result-emoji'>{res['emoji']}</div>
+                <div class='result-status'>[{cat_name}] {status_key}</div>
+                <div class='stars'>{res['stars']}</div>
+                <div class='summary-text'>💡 <b>오늘의 한줄 요약:</b><br>{res['summary']}</div>
+            </div>
+        """, unsafe_allow_html=True)
 
-    # (2) 운세 지수
-    st.write(f"📊 **오늘의 {cat_name} 지수: {res['score']}점**")
-    st.progress(res['score'] / 100)
+        # 운세 지수
+        st.write(f"📊 **오늘의 {cat_name} 지수: {res['score']}점**")
+        st.progress(res['score'] / 100)
+        st.write("")
+
+        # Action Item (해볼 것 / 피할 것)
+        col1, col2 = st.columns(2)
+        with col1:
+            st.success(f"**⭕ 오늘은 이렇게 해보세요!**\n\n👉 {selected_do}")
+        with col2:
+            st.error(f"**❌ 오늘은 이건 피하세요!**\n\n👉 {selected_dont}")
+
+        st.write("")
+
+        # 행운 요소
+        st.subheader("🍀 오늘의 행운 포인트")
+        lcol1, lcol2, lcol3 = st.columns(3)
+        with lcol1:
+            st.markdown(f"<div class='lucky-box'><div class='lucky-title'>🎨 행운의 컬러</div><div class='lucky-value'>{color}</div></div>", unsafe_allow_html=True)
+        with lcol2:
+            st.markdown(f"<div class='lucky-box'><div class='lucky-title'>📍 행운의 장소</div><div class='lucky-value'>{place}</div></div>", unsafe_allow_html=True)
+        with lcol3:
+            st.markdown(f"<div class='lucky-box'><div class='lucky-title'>🔢 행운의 숫자</div><div class='lucky-value'><b>{number}</b></div></div>", unsafe_allow_html=True)
+
+        # 추천 BGM 영역
+        st.markdown(f"<div class='music-box'>🎵 <b>오늘 당신을 위한 BGM 추천</b><br><br>{bgm}</div>", unsafe_allow_html=True)
+
+        # 한마디 메시지
+        st.markdown(f"<div class='quote-box'>💌 오늘의 한마디<br><br>{quote}</div>", unsafe_allow_html=True)
+        
+        st.balloons()
+
     st.write("")
 
-    # (3) Action Item (해볼 것 / 피할 것)
-    col1, col2 = st.columns(2)
-    with col1:
-        st.success(f"**⭕ 오늘은 이렇게 해보세요!**\n\n👉 {selected_do}")
-    with col2:
-        st.error(f"**❌ 오늘은 이건 피하세요!**\n\n👉 {selected_dont}")
-
-    st.write("")
-
-    # (4) 행운 요소 (아이템 ❌ ➡️ 장소/컬러/숫자 ⭕)
-    st.subheader("🍀 오늘의 행운 포인트")
-    lcol1, lcol2, lcol3 = st.columns(3)
-    with lcol1:
-        st.markdown(f"<div class='lucky-box'><div class='lucky-title'>🎨 행운의 컬러</div><div class='lucky-value'>{color}</div></div>", unsafe_allow_html=True)
-    with lcol2:
-        st.markdown(f"<div class='lucky-box'><div class='lucky-title'>📍 행운의 장소</div><div class='lucky-value'>{place}</div></div>", unsafe_allow_html=True)
-    with lcol3:
-        st.markdown(f"<div class='lucky-box'><div class='lucky-title'>🔢 행운의 숫자</div><div class='lucky-value'><b>{number}</b></div></div>", unsafe_allow_html=True)
-
-    # (5) 한마디 메시지
-    st.markdown(f"<div class='quote-box'>💌 오늘의 한마디<br><br>{quote}</div>", unsafe_allow_html=True)
-
-    st.write("")
-    st.balloons()
-
-    # (6) 다시 뽑기 버튼
-    if st.button("🔄 다른 운세 다시 뽑기", use_container_width=True):
-        st.session_state.drawn = False
-        st.rerun()
+    # (2) 다시 뽑기 버튼 (횟수 안내 포함)
+    left_draws = MAX_DRAWS - st.session_state.count
+    if left_draws > 0:
+        if st.button(f"🔄 다시 뽑기 (남은 기회: {left_draws}회)", use_container_width=True):
+            st.session_state.drawn = False
+            st.rerun()
+    else:
+        st.warning("⚠️ 오늘의 재뽑기 기회를 모두 사용하셨습니다.")
+        if st.button("🏠 처음 화면으로 돌아가기", use_container_width=True):
+            st.session_state.drawn = False
+            st.rerun()
