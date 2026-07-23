@@ -4,35 +4,34 @@ import streamlit as st
 
 # 1. 페이지 기본 설정
 st.set_page_config(
-    page_title="신비로운 오늘의 운세 🔮",
-    page_icon="✨",
+    page_title="오늘의 운세 & 멘탈 케어 🔮",
+    page_icon="🌿",
     layout="centered"
 )
 
-# 2. 커스텀 CSS (화려하고 예쁜 스타일링)
+# 2. 커스텀 CSS (세련되고 모던한 고3 감성 디자인)
 st.markdown("""
     <style>
-    /* 배경 및 기본 폰트 설정 */
+    /* 전체 배경 */
     .stApp {
-        background: linear-gradient(180deg, #F9FAFB 0%, #EEF2FF 100%);
+        background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
     }
     
-    /* 타이틀 애니메이션 & 디자인 */
+    /* 타이틀 디자인 */
     .title-container {
         text-align: center;
-        padding: 20px 0 10px 0;
+        padding: 25px 0 15px 0;
     }
     .main-title {
-        font-size: 2.8rem;
-        font-weight: 900;
-        background: linear-gradient(90deg, #4F46E5, #7C3AED, #EC4899);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1E293B;
         margin-bottom: 8px;
+        letter-spacing: -0.5px;
     }
     .sub-title {
-        font-size: 1.1rem;
-        color: #4B5563;
+        font-size: 1.05rem;
+        color: #64748B;
         font-weight: 500;
     }
 
@@ -40,93 +39,94 @@ st.markdown("""
     .intro-card {
         background: white;
         border-radius: 20px;
-        padding: 25px;
+        padding: 28px;
         text-align: center;
-        box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.1);
-        border: 1px solid #E0E7FF;
+        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
+        border: 1px solid #E2E8F0;
         margin-bottom: 25px;
     }
     .intro-badge {
         display: inline-block;
-        background-color: #EEF2FF;
-        color: #4F46E5;
+        background-color: #F1F5F9;
+        color: #334155;
         font-weight: 700;
         padding: 6px 16px;
         border-radius: 20px;
-        font-size: 0.9rem;
-        margin-bottom: 12px;
+        font-size: 0.85rem;
+        margin-bottom: 14px;
+        letter-spacing: 0.5px;
     }
 
-    /* 결과 카드 스타일 */
+    /* 결과 메인 카드 */
     .fortune-card {
         background: white;
         border-radius: 24px;
-        padding: 30px;
+        padding: 32px;
         text-align: center;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
-        border: 2px solid #F3E8FF;
+        box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.06);
+        border: 1px solid #E2E8F0;
         margin-bottom: 25px;
     }
     .result-emoji {
-        font-size: 5rem;
+        font-size: 4.5rem;
         line-height: 1;
-        margin-bottom: 15px;
-        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        margin-bottom: 16px;
     }
     .result-status {
-        font-size: 2.2rem;
+        font-size: 2rem;
         font-weight: 800;
-        color: #111827;
+        color: #0F172A;
         margin-bottom: 6px;
     }
     .stars {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
         color: #F59E0B;
         margin-bottom: 20px;
     }
     .summary-text {
         font-size: 1.05rem;
-        line-height: 1.7;
-        color: #374151;
-        background-color: #F9FAFB;
-        padding: 18px 22px;
+        line-height: 1.75;
+        color: #334155;
+        background-color: #F8FAFC;
+        padding: 20px;
         border-radius: 16px;
-        border-left: 5px solid #8B5CF6;
+        border-left: 4px solid #475569;
         text-align: left;
     }
 
     /* 행운의 요소 박스 */
     .lucky-box {
         background: white;
-        border: 1px solid #E5E7EB;
+        border: 1px solid #E2E8F0;
         border-radius: 16px;
-        padding: 16px;
+        padding: 18px 12px;
         text-align: center;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
     }
     .lucky-title {
         font-size: 0.85rem;
-        color: #6B7280;
+        color: #64748B;
         font-weight: 600;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
     }
     .lucky-value {
-        font-size: 1.1rem;
-        color: #1F2937;
+        font-size: 1.05rem;
+        color: #0F172A;
         font-weight: 700;
     }
 
-    /* 힐링 한마디 카드 */
+    /* 힐링 메시지 카드 */
     .quote-box {
-        background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+        background: #F8FAFC;
         border-radius: 16px;
-        padding: 20px;
+        padding: 22px;
         text-align: center;
         font-size: 1.05rem;
-        color: #92400E;
+        color: #334155;
         font-weight: 600;
-        border: 1px solid #FDE68A;
+        border: 1px solid #E2E8F0;
         margin-top: 15px;
+        line-height: 1.6;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -134,8 +134,8 @@ st.markdown("""
 # 3. 타이틀 영역
 st.markdown("""
     <div class='title-container'>
-        <div class='main-title'>✨ 신비로운 오늘의 운세 ✨</div>
-        <div class='sub-title'>당신의 하루를 환하게 밝혀줄 운명의 메시지를 확인해보세요</div>
+        <div class='main-title'>🌿 오늘의 운세 & 멘탈 케어</div>
+        <div class='sub-title'>오늘 하루, 당신의 페이스를 찾아줄 운명의 메시지</div>
     </div>
 """, unsafe_allow_html=True)
 
@@ -146,32 +146,32 @@ if "drawn" not in st.session_state:
     st.session_state.drawn = False
 
 # ----------------------------------------------------
-# 화면 1: 뽑기 전 화면 (예쁘게 꾸며진 입력 폼)
+# 화면 1: 첫 화면 (차분하고 깔끔한 입력 폼)
 # ----------------------------------------------------
 if not st.session_state.drawn:
     st.markdown("""
         <div class='intro-card'>
-            <div class='intro-badge'>🔮 TODAY's FORTUNE</div>
-            <h3 style='margin-top:0; color:#1F2937;'>오늘 하루, 어떤 운이 당신을 기다리고 있을까요?</h3>
-            <p style='color:#6B7280; font-size:0.95rem; margin-bottom:0;'>
-                아래의 정보를 선택하고 <b>[운세 카드 뽑기]</b> 버튼을 누르면<br>
-                오늘의 총평부터 행운의 아이템, 구체적인 조언까지 모두 알려드려요!
+            <div class='intro-badge'>🔮 DAILY FOCUS</div>
+            <h3 style='margin-top:0; color:#0F172A; font-size:1.35rem;'>오늘 나에게 필요한 리듬과 흐름을 확인해보세요</h3>
+            <p style='color:#64748B; font-size:0.95rem; margin-bottom:0; line-height:1.6;'>
+                궁금한 영역과 정보를 선택하고 <b>[운세 카드 확인하기]</b>를 누르면<br>
+                오늘의 집중도 흐름부터 유용한 행동 팁까지 차분하게 정리해 드립니다.
             </p>
         </div>
     """, unsafe_allow_html=True)
 
-    # 입력 탭/컬럼 구성
+    # 입력 컬럼 구성
     col_a, col_b = st.columns(2)
     
     with col_a:
         category = st.selectbox(
-            "1️⃣ 궁금한 운세 종류",
-            ["종합운 🌟", "금전운 💰", "학업/사업운 📚", "재물운 💎", "연애운 💕"]
+            "1️⃣ 확인할 운세 분야",
+            ["종합운 🌟", "학업/집중운 📚", "컨디션/건강운 🌿", "재물/소비운 💰", "대인관계운 🤝"]
         )
     
     with col_b:
         zodiac = st.selectbox(
-            "2️⃣ 당신의 별자리 (선택)",
+            "2️⃣ 별자리 선택",
             ["물병자리 ♒", "물고기자리 ♓", "양자리 ♈", "황소자리 ♉", 
              "쌍둥이자리 ♊", "게자리 ♋", "사자자리 ♌", "처녀자리 ♍", 
              "천칭자리 ♎", "전갈자리 ♏", "사수자리 ♐", "염소자리 ♑"]
@@ -181,115 +181,123 @@ if not st.session_state.drawn:
     st.write("")
 
     # 버튼 클릭 시 운세 뽑기 진행
-    if st.button("🔮 오늘의 운세 카드 뽑기!", use_container_width=True, type="primary"):
+    if st.button("🔮 오늘의 운세 카드 확인하기", use_container_width=True, type="primary"):
         st.session_state.selected_category = category
         st.session_state.selected_zodiac = zodiac
         st.session_state.drawn = True
         st.rerun()
 
 # ----------------------------------------------------
-# 화면 2: 운세 결과 화면
+# 화면 2: 결과 화면 (고3 맞춤형 수험/일상 조언)
 # ----------------------------------------------------
 else:
-    # 운세 데이터 정의
+    # 수험생 및 고등학생 눈높이에 맞춘 운세 데이터
     fortunes = {
         "대길 (大吉)": {
             "score": 98,
             "stars": "⭐⭐⭐⭐⭐",
-            "emoji": "🥳🎉",
-            "summary": "손대는 일마다 놀라운 성과와 긍정적인 에너지가 가득한 최고의 날입니다! 망설이고 있던 중요한 도전이나 계획이 있다면 고민하지 말고 지금 당장 시작해보세요.",
+            "emoji": "🎯",
+            "summary": "집중력과 몰입도가 최상에 달하는 날입니다. 그동안 차근차근 쌓아온 노력이 비로소 실체적인 성과나 확실한 이해로 이어지는 절호의 타이밍입니다.",
             "dos": [
-                "그동안 미뤄두었던 중요한 과제나 망설이던 연락을 오늘 바로 실행으로 옮겨보세요.",
-                "자신감 있고 당당하게 의견을 표현하세요. 뜻밖의 귀인을 만나 적극적인 지원을 받을 확률이 매우 높습니다.",
-                "좋아하는 사람이나 소중한 지인에게 먼저 따뜻한 커피 한 잔과 함께 마음을 전해보세요."
+                "취약했던 단원이나 가장 까다로웠던 과목의 고난도 문제에 적극적으로 도전해보세요.",
+                "오늘 세운 학습 계획이나 목표 스케줄을 끝까지 완수하여 성취감을 극대화하세요.",
+                "스스로의 가능성을 믿고 자신감 있게 목표 점수를 높여 잡는 배짱을 가지세요."
             ],
             "donts": [
-                "스스로의 가능성을 낮게 평가하거나 불필요한 겸손으로 다가온 절호의 기회를 지나쳐버리는 것.",
-                "오늘 충분히 끝낼 수 있는 일을 '내일 해야지' 하며 미루는 순간 행운의 흐름이 꺾일 수 있습니다.",
-                "남들의 시선이나 평가에 너무 신경 쓰느라 본인이 진짜 원하는 바를 포기하는 행동."
+                "운이 좋다고 해서 방심하거나 계획했던 공부 스케줄을 중간에 포기하는 일.",
+                "주변의 사소한 잡음이나 쓸데없는 논쟁에 휘말려 귀중한 몰입 시간을 빼앗기는 것.",
+                "타인의 부정적인 한마디에 흔들려 본인의 페이스를 스스로 무너뜨리는 행동."
             ]
         },
         "길 (吉)": {
-            "score": 82,
+            "score": 85,
             "stars": "⭐⭐⭐⭐☆",
-            "emoji": "😊🌸",
-            "summary": "차분하면서도 알찬 보람을 거둘 수 있는 매끄러운 날입니다. 꾸준히 쌓아온 노력이 빛을 발하여 주변 사람들에게 시기 대신 따뜻한 인정을 받게 됩니다.",
+            "emoji": "🌱",
+            "summary": "안정적인 흐름 속에서 계획한 목표를 착실히 이행할 수 있는 날입니다. 큰 기복 없이 꾸준한 페이스를 유지하며 내실을 다지기에 적합합니다.",
             "dos": [
-                "평소 고마웠던 주변 사람들에게 작은 감사 인사나 정성 어린 말 한마디를 나누어보세요.",
-                "점심시간이나 퇴근 후 20분 정도 가벼운 산책을 하며 맑은 공기를 마시고 기분을 전환해보세요.",
-                "새롭게 관심을 갖고 있던 취미나 공부가 있다면 관련 자료를 차분히 탐색해보는 시간을 가지세요."
+                "오답 노트를 재점검하거나 개념을 완벽하게 내 것으로 만드는 복습에 집중하세요.",
+                "공부 중간중간 5분씩 가벼운 스트레칭으로 목과 어깨의 피로를 풀어주세요.",
+                "수면 패턴과 식사 시간을 일정하게 유지해 차분한 컨디션을 유지해 보세요."
             ],
             "donts": [
-                "주변 분위기에 휩쓸려 충동구매를 하거나 계획에 없던 과도한 지출을 진행하는 것.",
-                "가까운 사이일수록 예의를 갖추지 않고 감정적으로 대화를 이끌어가는 솔직함.",
-                "약속 시간에 임박해 서두르다가 중요한 소지품을 잃어버리거나 실수를 유발하는 행동."
+                "갑작스럽게 불안해진다고 해서 학습 방법을 이리저리 바꾸며 혼란을 자초하는 것.",
+                "스마트폰을 곁에 두고 습관적으로 숏폼 영상이나 SNS를 확인하며 집중력을 깨는 일.",
+                "카페인을 과도하게 섭취하며 무리하게 밤샘 공부를 강행하는 행동."
             ]
         },
         "소길 (小吉)": {
-            "score": 67,
+            "score": 70,
             "stars": "⭐⭐⭐☆☆",
-            "emoji": "🙂🌱",
-            "summary": "큰 파도 없이 평화롭고 잔잔한 하루입니다. 커다란 대박이나 변화를 노리기보다는 일상의 소소한 행복(소확행)을 만끽하는 것이 훨씬 유리합니다.",
+            "emoji": "☕",
+            "summary": "무난하고 평범하지만 소소한 성취를 느낄 수 있는 하루입니다. 무리한 목표보다는 오늘 주어진 할 일에만 담담하게 최선을 다하는 것이 효율적입니다.",
             "dos": [
-                "책상 위나 방 안 등 내 생활 영역을 말끔히 정리정돈하여 쾌적한 환경을 만들어보세요.",
-                "따뜻한 차나 좋아하는 음료 한 잔을 마시며 나만의 조용한 휴식 시간을 가져보세요.",
-                "오늘 처리해야 할 작은 업무나 루틴들을 하나씩 체크리스트로 지워나가는 재미를 느끼기."
+                "오늘 당장 해야 할 암기 분량이나 핵심 문제 풀이 등 작고 명확한 목표부터 처리하세요.",
+                "공부 환경이나 책상 위를 말끔히 정리하여 시각적인 산만함을 줄여보세요.",
+                "나에게 딱 맞는 차분한 백색소음이나 집중용 음악을 활용해 몰입감을 높이세요."
             ],
             "donts": [
-                "타인의 문제나 남들의 싸움에 과도하게 오지랖을 부려 쓸데없는 감정 에너지를 낭비하는 것.",
-                "몸에 무리가 가는 격렬한 운동을 갑자기 강행하거나 과도한 음주·야식을 즐기는 행동.",
-                "SNS 등을 통해 스스로를 다른 사람의 화려한 모습과 비교하며 사기를 떨어뜨리는 생각."
+                "남들의 진도나 문제집 회독 수에 연연하며 스스로에게 조급함을 부추기는 것.",
+                "잘 풀리지 않는 한 문제에 몇 시간씩 집착하여 전체 스케줄을 망치는 행동.",
+                "컨디션이 약간 떨어졌을 때 자신을 채찍질하며 과도한 자책에 빠지는 일."
             ]
         },
         "평 (平)": {
-            "score": 50,
+            "score": 55,
             "stars": "⭐⭐☆☆☆",
-            "emoji": "😐☕",
-            "summary": "급격한 변화보다는 현재 상태를 유연하게 유지하며 내실을 다져야 하는 무난한 하루입니다. 안정을 최우선으로 두는 것이 가장 지혜롭습니다.",
+            "emoji": "🔋",
+            "summary": "에너지 소모가 크고 약간의 집중력 저하가 찾아올 수 있는 날입니다. 성과를 급하게 내려고 하기보다는 컨디션 조절과 멘탈 관리에 신경 쓰세요.",
             "dos": [
-                "평소 지켜오던 자신만의 일상 루틴을 묵묵히 이어나가며 제페이스를 유지하세요.",
-                "퇴근/하교 후 일찍 잠자리에 들어 그동안 쌓인 컨디션 저하와 피로를 충분히 회복해보세요.",
-                "마음을 편안하게 해주는 음악을 듣거나 가벼운 독서로 심신을 차분히 다스려보세요."
+                "새로운 개념을 나가기보다 이전에 배운 내용을 가볍게 읽어보는 부담 없는 공부를 하세요.",
+                "퇴근 후/하교 후 일찍 잠자리에 들어 그동안 누적된 체력적 피로를 회복하세요.",
+                "따뜻한 물을 자주 마시고 정돈된 장소에서 잠시 눈을 감고 휴식을 취하세요."
             ],
             "donts": [
-                "잘 알지 못하는 분야에 홧김에 큰돈을 투자하거나 불확실한 계약을 급하게 진행하는 것.",
-                "중요한 안건에 대해 혼자서 독단적으로 판단하고 유별나게 고집을 부리는 행위.",
-                "컨디션이 저하된 상태에서 억지로 무리한 밤샘 작업이나 과로를 강행하는 것."
+                "컨디션이 저하된 상태에서 억지로 집중하려다 불필요한 실수를 반복하는 것.",
+                "중요한 진로 결정이나 시험 전략에 대해 혼자서 조급하게 결론을 내리는 행위.",
+                "친구들이나 주변 사람들의 말에 지나치게 민감하게 반응하여 감정을 소모하는 일."
             ]
         },
         "흉 (凶)": {
-            "score": 30,
+            "score": 40,
             "stars": "⭐☆☆☆☆",
-            "emoji": "🥺🌧️",
-            "summary": "컨디션이 약간 저하되거나 사소한 오해가 생기기 쉬운 조심스러운 날입니다. 오늘만큼은 적극적인 나섬보다 느긋하고 방어적인 태도로 하루를 보내세요.",
+            "emoji": "🛡️",
+            "summary": "마음이 다소 불안하거나 사소한 오해가 생길 수 있는 조심스러운 하루입니다. 오늘은 무리한 도전을 피하고 자신을 보호하는 방어적인 자세가 필요합니다.",
             "dos": [
-                "말을 하기 전에 '상대방이 어떻게 들을까?' 한 번 더 생각하는 신중함을 가져보세요.",
-                "이동 시 길가나 계단에서 스마트폰을 보지 말고 안전 운전 및 보행에 각별히 신경 쓰세요.",
-                "스트레스가 심하다면 잠시 하던 일을 내려놓고 명상이나 깊은 심호흡을 자주 해주세요."
+                "말이나 행동을 하기 전 한 번 더 생각하는 신중하고 차분한 태도를 유지하세요.",
+                "좋아하는 영양제나 따뜻한 음료를 챙겨 먹으며 체력과 면역력을 케어하세요.",
+                "마음이 복잡할 때는 오늘 하루 고생한 나 자신에게 격려의 혼잣말을 건네보세요."
             ],
             "donts": [
-                "감정이 격해진 상태에서 중요한 인생의 결정을 내리거나 홧김에 솔직한 말을 쏟아내는 것.",
-                "타인의 험담이나 뒷소문에 동조하여 함께 뒷이야기를 나누는 위험한 행동.",
-                "타인과의 가벼운 논쟁에서 끝까지 이기려고 자존심 싸움을 벌이는 일."
+                "감정 상태가 좋지 않을 때 타인에게 홧김에 까칠한 언행을 내뱉는 행동.",
+                "지나간 시험 결과나 과거의 실수를 자꾸 되새기며 자존감을 깎아내리는 일.",
+                "늦은 시간까지 스마트폰을 보며 불면증과 피로를 유발하는 습관."
             ]
         }
     }
 
-    # 행운 데이터
-    lucky_colors = ["로즈 핑크 🌸", "포레스트 그린 🌲", "미드나잇 블루 🌙", "버터 옐로우 🧈", "클래식 화이트 🤍", "라벤더 퍼플 🪻"]
-    lucky_items = ["따뜻한 차 한 잔 ☕", "편안한 운동화 👟", "손거울 🪞", "다이어리와 펜 📝", "텀블러 🧊", "푹신한 쿠션 🛋️"]
-    lucky_numbers = [3, 7, 8, 11, 21, 77, 99]
+    # 고3 수험생 일상에 꼭 필요한 현실적 행운 아이템
+    lucky_colors = ["딥 네이비 🌌", "포레스트 그린 🌲", "샤콜 그레이 📓", "아이보리 화이트 🤍", "스카이 블루 ☁️"]
+    lucky_items = [
+        "노이즈 캔슬링 이어폰 🎧", 
+        "스톱워치/타이머 ⏱️", 
+        "블루라이트 차단 안경 👓", 
+        "졸음 깨는 인공눈물 💧", 
+        "형광펜과 포스트잇 🖊️", 
+        "텀블러에 담긴 따뜻한 차 🍵", 
+        "비타민 C 영양제 💊"
+    ]
+    lucky_numbers = [3, 7, 12, 24, 88, 99]
     healing_quotes = [
-        "“오늘 흘린 작은 땀방울은 내일의 가장 눈부신 결실이 될 거예요.”",
-        "“잠시 쉬어가도 괜찮아요. 당신은 이미 충분히 잘하고 있으니까요.”",
-        "“뜻밖의 행운은 항상 무심코 지나치던 평범한 순간 속에 숨어있답니다.”",
-        "“오늘 하루 당신이 가는 길마다 따뜻한 햇살이 가득하기를 응원합니다.”",
-        "“마음먹은 대로 되지 않아도 괜찮아요. 더 멋진 기회가 찾아오는 과정일 뿐이에요.”"
+        "“묵묵히 걸어가는 오늘의 한 걸음이 모여, 결국 당신이 바라는 목적지에 도달하게 할 것입니다.”",
+        "“지금 당장 눈에 보이지 않더라도, 당신이 쏟은 노력은 물밑에서 차곡차곡 쌓이고 있습니다.”",
+        "“남들과의 비교는 내려놓으세요. 당신은 오직 어제의 자신보다만 발전하면 충분합니다.”",
+        "“지치고 힘든 순간이 온다는 것은, 당신이 목표를 향해 진심으로 달리고 있다는 증거입니다.”",
+        "“오늘 하루도 정말 고생 많았습니다. 당신은 생각보다 훨씬 더 강하고 잘해내고 있습니다.”"
     ]
 
     # 로딩 애니메이션 효과
-    with st.spinner(f"🔮 {st.session_state.selected_zodiac}의 기운을 모아 {st.session_state.selected_category} 카드를 뽑는 중..."):
-        time.sleep(0.8) # 약간의 연출용 대기 시간
+    with st.spinner(f"🌿 {st.session_state.selected_zodiac}의 리듬에 맞춰 {st.session_state.selected_category} 카드를 분석하는 중..."):
+        time.sleep(0.7)
 
     # 랜덤 결과 추출
     status_key = random.choice(list(fortunes.keys()))
@@ -309,41 +317,40 @@ else:
             <div class='result-emoji'>{res['emoji']}</div>
             <div class='result-status'>[{cat_name}] {status_key}</div>
             <div class='stars'>{res['stars']}</div>
-            <div class='summary-text'>💡 <b>오늘의 총평:</b><br>{res['summary']}</div>
+            <div class='summary-text'>💡 <b>오늘의 리듬 분석:</b><br>{res['summary']}</div>
         </div>
     """, unsafe_allow_html=True)
 
     # (2) 운세 지수 (프로그레스 바)
-    st.write(f"📊 **오늘의 {cat_name} 지수: {res['score']}점**")
+    st.write(f"📊 **오늘의 {cat_name} 집중/컨디션 지수: {res['score']}점**")
     st.progress(res['score'] / 100)
     st.write("")
 
-    # (3) Action Item (해야 할 일 / 피해야 할 일)
+    # (3) Action Item (추천 행동 / 주의할 행동)
     col1, col2 = st.columns(2)
     with col1:
-        st.success(f"**⭕ 오늘은 꼭 이렇게 해보세요!**\n\n{selected_do}")
+        st.success(f"**⭕ 오늘 실천하면 좋은 팁**\n\n{selected_do}")
     with col2:
-        st.error(f"**❌ 오늘은 이런 행동을 피하세요!**\n\n{selected_dont}")
+        st.error(f"**❌ 오늘 주의해야 할 점**\n\n{selected_dont}")
 
     st.write("")
 
-    # (4) 행운 요소
-    st.subheader("🍀 오늘의 행운 요소")
+    # (4) 행운 요소 (현실적인 수험/일상 아이템 배치)
+    st.subheader("🍀 오늘의 행운 포인트")
     lcol1, lcol2, lcol3 = st.columns(3)
     with lcol1:
         st.markdown(f"<div class='lucky-box'><div class='lucky-title'>🎨 행운의 컬러</div><div class='lucky-value'>{color}</div></div>", unsafe_allow_html=True)
     with lcol2:
-        st.markdown(f"<div class='lucky-box'><div class='lucky-title'>🎁 행운의 아이템</div><div class='lucky-value'>{item}</div></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='lucky-box'><div class='lucky-title'>🎒 행운의 아이템</div><div class='lucky-value'>{item}</div></div>", unsafe_allow_html=True)
     with lcol3:
-        st.markdown(f"<div class='lucky-box'><div class='lucky-title'>🔢 행운의 숫자</div><div class='lucky-value'>{number}</div></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='lucky-box'><div class='lucky-title'>🔢 행운의 숫자</div><div class='lucky-value'><b>{number}</b></div></div>", unsafe_allow_html=True)
 
-    # (5) 힐링 메시지
-    st.markdown(f"<div class='quote-box'>💌 오늘의 힐링 메시지<br><br>{quote}</div>", unsafe_allow_html=True)
+    # (5) 힐링/동기부여 메시지
+    st.markdown(f"<div class='quote-box'>💬 멘탈 케어 메시지<br><br>{quote}</div>", unsafe_allow_html=True)
 
     st.write("")
-    st.balloons()
 
     # (6) 다시 뽑기 버튼
-    if st.button("🔄 다른 운세 다시 뽑기", use_container_width=True):
+    if st.button("🔄 다른 운세 다시 확인하기", use_container_width=True):
         st.session_state.drawn = False
         st.rerun()
