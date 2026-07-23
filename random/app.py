@@ -105,7 +105,7 @@ if not st.session_state.drawn:
             st.rerun()
 
 # ----------------------------------------------------
-# 화면 2: 긁기 화면 (행운 요소 명칭 라벨 직관화)
+# 화면 2: 긁기 화면
 # ----------------------------------------------------
 else:
     # 운세 데이터
@@ -152,10 +152,16 @@ else:
         }
     }
 
-    # 행운 및 음악 데이터
-    lucky_colors = ["로즈 핑크 🌸", "포레스트 그린 🌲", "미드나잇 블루 🌙", "버터 옐로우 🧈", "아이보리 화이트 🤍"]
+    # 다양하게 확장된 색상표 (다채로운 20여 가지 컬러 팔레트)
+    lucky_colors = [
+        "로즈 핑크 🌸", "포레스트 그린 🌲", "미드나잇 블루 🌙", "버터 옐로우 🧈", "아이보리 화이트 🤍",
+        "라벤더 퍼플 💜", "피치 코랄 🍑", "스카이 블루 ☁️", "민트 그린 🌿", "선셋 오렌지 🌅",
+        "크림 베이지 🍦", "에메랄드 그린 💚", "와인 레드 🍷", "네이비 🌌", "올리브 그린 🫒",
+        "딥 바이올렛 🔮", "펄 실버 🩶", "클래식 골드 💛", "차콜 그레이 🖤", "오션 틸 🌊"
+    ]
+    
     lucky_places = ["햇살 잘 드는 카페 ☕", "아늑한 내 방 침대 🛌", "조용한 공원 산책로 🌿", "자주 가는 편의점 🏪", "서점이나 소품샵 📚"]
-    lucky_numbers = [3, 7, 12, 21, 77, 99]
+    
     music_list = [
         "🎧 신나는 시티팝 (드라이브하는 기분 내기)",
         "🎧 잔잔한 로파이(Lo-Fi) 비트 (힐링이 필요할 때)",
@@ -174,14 +180,14 @@ else:
     # 무작위 결과 추출
     status_key = random.choice(list(fortunes.keys()))
     res = fortunes[status_key]
-    color = random.choice(lucky_colors)
-    place = random.choice(lucky_places)
-    number = random.choice(lucky_numbers)
+    color = random.choice(lucky_colors)      # 색상표에서 랜덤 추출
+    place = random.choice(lucky_places)      # 장소 랜덤 추출
+    number = random.randint(1, 99)           # 1 ~ 99 중 랜덤 숫자
     bgm = random.choice(music_list)
     quote = random.choice(healing_quotes)
     cat_name = st.session_state.selected_category.split()[0]
 
-    # HTML/JS 자동 긁기 기능 및 명확한 라벨링 적용
+    # HTML/JS 자동 긁기 기능
     scratch_html = f"""
     <!DOCTYPE html>
     <html>
@@ -226,7 +232,6 @@ else:
             .do-box {{ background: #F0FDF4; border: 1px solid #BBF7D0; padding: 10px; border-radius: 10px; font-size: 0.85rem; color: #166534; text-align: left; }}
             .dont-box {{ background: #FEF2F2; border: 1px solid #FECACA; padding: 10px; border-radius: 10px; font-size: 0.85rem; color: #991B1B; text-align: left; }}
             
-            /* 행운 요소 3개 컬럼 그리드 레이아웃 */
             .lucky-grid {{
                 display: grid;
                 grid-template-columns: 1fr 1fr 1fr;
@@ -282,7 +287,6 @@ else:
                     <div class="dont-box"><b>❌ 피하세요</b><br>{res['donts']}</div>
                 </div>
                 
-                <!-- 명확하게 단어를 표기한 행운 카드 영역 -->
                 <div class="lucky-grid">
                     <div class="lucky-card">
                         <div class="lucky-label">🎨 행운의 컬러</div>
@@ -317,11 +321,9 @@ else:
                 canvas.width = container.offsetWidth;
                 canvas.height = container.offsetHeight;
 
-                // 은색 레이어
                 ctx.fillStyle = '#CBD5E1';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // 안내문
                 ctx.fillStyle = '#64748B';
                 ctx.font = 'bold 20px sans-serif';
                 ctx.textAlign = 'center';
@@ -333,7 +335,6 @@ else:
 
             let isDrawing = false;
 
-            // 긁은 비율(면적) 계산 함수
             function checkScratchPercentage() {{
                 if (isRevealed) return;
 
@@ -349,7 +350,6 @@ else:
 
                 const percentage = (transparentPixels / (pixels.length / 4)) * 100;
 
-                // 40% 이상 긁었으면 자동으로 나머지 전체 지우기
                 if (percentage >= 40) {{
                     isRevealed = true;
                     canvas.style.opacity = '0';
@@ -388,12 +388,10 @@ else:
     </html>
     """
 
-    # 복권 긁기 컴포넌트
     components.html(scratch_html, height=620)
 
     st.write("")
 
-    # 재뽑기 및 횟수 안내
     left_draws = MAX_DRAWS - st.session_state.count
     if left_draws > 0:
         if st.button(f"🔄 다른 운세 다시 뽑기 (남은 기회: {left_draws}회)", use_container_width=True):
