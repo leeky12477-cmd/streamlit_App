@@ -53,7 +53,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. 세션 상태 초기화 (결과 화면 및 횟수 제한용)
+# 3. 세션 상태 초기화
 if "drawn" not in st.session_state:
     st.session_state.drawn = False
 if "count" not in st.session_state:
@@ -72,29 +72,28 @@ st.markdown("""
 st.write("")
 
 # ----------------------------------------------------
-# 화면 1: 첫 화면 (카테고리 선택: 종합운, 재물운, 금전운, 연애운, 학업운)
+# 화면 1: 카테고리 선택 화면 (종합운, 재물운, 학업운, 금전운, 연애운)
 # ----------------------------------------------------
 if not st.session_state.drawn:
     st.markdown(f"""
         <div class='intro-card'>
             <div class='intro-badge'>🔮 TODAY's FORTUNE</div>
-            <h3 style='margin-top:0; color:#1A202C; font-size:1.25rem;'>원하는 운세 카테고리를 선택하세요</h3>
+            <h3 style='margin-top:0; color:#1A202C; font-size:1.25rem;'>궁금한 운세를 선택하고 복권을 뽑아보세요</h3>
             <p style='color:#718096; font-size:0.9rem; margin-bottom:0;'>
-                원하는 카테고리를 고르고 버튼을 누르면 긁을 수 있는 복권이 나타납니다.<br>
-                <b>(남은 기회: {MAX_DRAWS - st.session_state.count} / {MAX_DRAWS}회)</b>
+                <b>(오늘의 남은 기회: {MAX_DRAWS - st.session_state.count} / {MAX_DRAWS}회)</b>
             </p>
         </div>
     """, unsafe_allow_html=True)
 
-    # 요청하신 5가지 카테고리 구성
+    # 5가지 요청 카테고리 선택
     category = st.selectbox(
-        "👉 궁금한 운세를 선택해주세요",
-        ["종합운 🌟", "재물운 💎", "금전운 💰", "연애운 💕", "학업운 📚"]
+        "👉 뽑고 싶은 운세를 선택해주세요",
+        ["종합운 🌟", "재물운 💎", "학업운 📚", "금전운 💰", "연애운 💕"]
     )
 
     st.write("")
 
-    # 횟수 제한 확인
+    # 횟수 제한 확인 및 뽑기 진행
     if st.session_state.count >= MAX_DRAWS:
         st.warning("⚠️ 오늘의 뽑기 기회를 모두 사용하셨습니다! 내일 다시 시도해주세요. 🍀")
         st.button("🎲 운세 복권 뽑기", disabled=True, use_container_width=True)
@@ -106,7 +105,7 @@ if not st.session_state.drawn:
             st.rerun()
 
 # ----------------------------------------------------
-# 화면 2: 결과 화면 (마우스로 직접 긁는 Canvas 복권)
+# 화면 2: 긁기 화면 (40% 이상 긁으면 자동 오픈 구현)
 # ----------------------------------------------------
 else:
     # 운세 데이터
@@ -153,7 +152,7 @@ else:
         }
     }
 
-    # 행운 및 BGM 데이터
+    # 행운 및 음악 데이터
     lucky_colors = ["로즈 핑크 🌸", "포레스트 그린 🌲", "미드나잇 블루 🌙", "버터 옐로우 🧈", "아이보리 화이트 🤍"]
     lucky_places = ["햇살 잘 드는 카페 ☕", "아늑한 내 방 침대 🛌", "조용한 공원 산책로 🌿", "자주 가는 편의점 🏪", "서점이나 소품샵 📚"]
     lucky_numbers = [3, 7, 12, 21, 77, 99]
@@ -172,7 +171,7 @@ else:
         "“오늘 어떤 일이 있든, 결국엔 전부 다 잘 될 거니까 걱정 마세요.”"
     ]
 
-    # 무작위 결과 조합
+    # 무작위 결과 추출
     status_key = random.choice(list(fortunes.keys()))
     res = fortunes[status_key]
     color = random.choice(lucky_colors)
@@ -182,7 +181,7 @@ else:
     quote = random.choice(healing_quotes)
     cat_name = st.session_state.selected_category.split()[0]
 
-    # 복권 긁기 HTML5/JS 구현
+    # HTML/JS 자동 긁기 기능 적용 (40% 이상 긁으면 전체 노출)
     scratch_html = f"""
     <!DOCTYPE html>
     <html>
@@ -240,6 +239,7 @@ else:
                 height: 100%;
                 cursor: pointer;
                 touch-action: none;
+                transition: opacity 0.5s ease;
             }}
             .guide-text {{
                 margin-top: 8px; font-size: 0.85rem; color: #718096; font-weight: 600;
@@ -267,43 +267,76 @@ else:
             </div>
             <canvas id="scratchCanvas"></canvas>
         </div>
-        <div class="guide-text">👆 마우스나 손가락으로 은색 회색 판을 쓱쓱 긁어보세요!</div>
+        <div class="guide-text" id="guide">👆 마우스로 쓱쓱 긁어보세요! (조금만 긁으면 알아서 열려요)</div>
 
         <script>
             const canvas = document.getElementById('scratchCanvas');
             const ctx = canvas.getContext('2d');
             const container = document.getElementById('container');
+            const guide = document.getElementById('guide');
+
+            let isRevealed = false;
 
             function initCanvas() {{
                 canvas.width = container.offsetWidth;
                 canvas.height = container.offsetHeight;
 
-                // 은색 복권 레이어 그리기
+                // 은색 레이어
                 ctx.fillStyle = '#CBD5E1';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // 복권 겉면 무늬 및 텍스트
+                // 안내문
                 ctx.fillStyle = '#64748B';
                 ctx.font = 'bold 20px sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText('🪙 마우스로 여기를 긁어보세요!', canvas.width / 2, canvas.height / 2 - 10);
+                ctx.fillText('🪙 여기를 긁어보세요!', canvas.width / 2, canvas.height / 2 - 10);
                 
                 ctx.font = '14px sans-serif';
-                ctx.fillText('오늘의 운세가 숨겨져 있습니다', canvas.width / 2, canvas.height / 2 + 20);
+                ctx.fillText('오늘의 운세 복권', canvas.width / 2, canvas.height / 2 + 20);
             }}
 
             let isDrawing = false;
 
+            // 긁은 비율(면적) 계산 함수
+            function checkScratchPercentage() {{
+                if (isRevealed) return;
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = imageData.data;
+                let transparentPixels = 0;
+
+                // Alpha 값을 체크하여 긁힌 픽셀 수 계산
+                for (let i = 3; i < pixels.length; i += 4) {{
+                    if (pixels[i] === 0) {{
+                        transparentPixels++;
+                    }}
+                }}
+
+                const percentage = (transparentPixels / (pixels.length / 4)) * 100;
+
+                // 40% 이상 긁었으면 자동으로 나머지 전체 지우기
+                if (percentage >= 40) {{
+                    isRevealed = true;
+                    canvas.style.opacity = '0';
+                    setTimeout(() => {{
+                        canvas.style.display = 'none';
+                    }}, 500);
+                    guide.innerText = "✨ 오늘의 운세가 모두 공개되었습니다!";
+                }}
+            }}
+
             function scratch(e) {{
-                if (!isDrawing) return;
+                if (!isDrawing || isRevealed) return;
                 const rect = canvas.getBoundingClientRect();
                 const x = (e.clientX || e.touches[0].clientX) - rect.left;
                 const y = (e.clientY || e.touches[0].clientY) - rect.top;
 
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.beginPath();
-                ctx.arc(x, y, 25, 0, Math.PI * 2);
+                ctx.arc(x, y, 30, 0, Math.PI * 2);
                 ctx.fill();
+
+                checkScratchPercentage();
             }}
 
             canvas.addEventListener('mousedown', (e) => {{ isDrawing = true; scratch(e); }});
@@ -320,12 +353,12 @@ else:
     </html>
     """
 
-    # 긁기 복권 커스텀 컴포넌트 출력
+    # 복권 긁기 컴포넌트
     components.html(scratch_html, height=620)
 
     st.write("")
 
-    # 재뽑기 버튼 및 횟수 안내
+    # 재뽑기 및 횟수 안내
     left_draws = MAX_DRAWS - st.session_state.count
     if left_draws > 0:
         if st.button(f"🔄 다른 운세 다시 뽑기 (남은 기회: {left_draws}회)", use_container_width=True):
